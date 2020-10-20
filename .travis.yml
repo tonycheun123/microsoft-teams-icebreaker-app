@@ -9,20 +9,19 @@ env:
     - REPO_DEST="${REPO_SOURCE}.wiki"
     - GH_REPO_DEST="github.com/${ORG}/${REPO_DEST}.git"
     - GH_REPO_CONSOLIDATE="github.com/${ORG}/${REPO_SOURCE}.git"
-    - SRC_BRANCH="v-abtan/test-branch"
 install: skip
 stages:
   - name: WikiUpdate
 jobs:
   include:
     - stage: WikiUpdate
-      if: (branch = ${SRC_BRANCH}) AND (type = push)
+      if: (branch = v-abtan/test-branch) AND (type = push)
       script:
         - rm -rf ${REPO_SOURCE}
         - rm -rf ${REPO_DEST}
         # Clone repositories
         - git clone https://${GH_REPO_DEST}
-        - git clone -b ${SRC_BRANCH} https://${GH_REPO_CONSOLIDATE}
+        - git clone -b v-abtan/test-branch https://${GH_REPO_CONSOLIDATE}
         # Update wiki repository with wiki folder contents
         - yes | cp -rf ${REPO_SOURCE}/Wiki/* ${REPO_DEST}/
         - cd ${REPO_DEST}
