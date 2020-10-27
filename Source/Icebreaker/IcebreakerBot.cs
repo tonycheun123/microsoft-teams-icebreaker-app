@@ -396,36 +396,10 @@ namespace Icebreaker
             var tasks = members.Select(m => this.dataProvider.GetUserInfoAsync(m.AsTeamsChannelAccount().ObjectId));
             var results = await Task.WhenAll(tasks);
 
-            //---------testing------------
-            this.telemetryClient.TrackTrace($"Testing, before filtering {members.Count} in team {teamInfo.TeamId}");
-            foreach (var m in members)
-            {
-                this.telemetryClient.TrackTrace($"Channel member: {m.Name}, id: {m.Id}");
-            }
-
-            var members2 = members
+            return members
                 .Zip(results, (member, userInfo) => ((userInfo == null) || userInfo.OptedIn) ? member : null)
                 .Where(m => m != null)
                 .ToList();
-            this.telemetryClient.TrackTrace($"Testing, after filtering {members2.Count} in team {teamInfo.TeamId}");
-            foreach (var m in members2)
-            {
-                this.telemetryClient.TrackTrace($"OptIn member: {m.Name}, id: {m.Id}");
-            }
-
-            var members3 = members
-                .Zip(results, (member, userInfo) => ((userInfo == null) || userInfo.OptedIn) ? member : null)
-                .Where(m => m == null)
-                .ToList();
-            this.telemetryClient.TrackTrace($"Testing, during filtering {members3.Count} filtered out in team {teamInfo.TeamId}");
-            foreach (var m in members3)
-            {
-                this.telemetryClient.TrackTrace($"OptOut member: {m.Name}, id: {m.Id}");
-            }
-
-            //----------------------------
-
-            return members2;
         }
 
         private List<Tuple<ChannelAccount, ChannelAccount>> MakePairs(List<ChannelAccount> users)
